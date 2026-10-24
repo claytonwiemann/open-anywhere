@@ -53,6 +53,7 @@ For shulker boxes/ender chests, any changes to their contents are saved back to 
 ## Development
 
 Open Anywhere is currently under development. Additional features, compatibility improvements, and bug fixes may be introduced in future releases.
+Open Anywhere is heavily inspired by **QuickShulker**, created by *kyrptonaught*.
 
 ## License
 
