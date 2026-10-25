@@ -1,5 +1,6 @@
 package net.claywiemann.openanywhere.menu;
 
+import net.claywiemann.openanywhere.client.MousePositionHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;

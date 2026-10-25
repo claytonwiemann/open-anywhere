@@ -2,16 +2,20 @@ package net.claywiemann.openanywhere.network;
 
 import net.claywiemann.openanywhere.inventory.ShulkerInventory;
 import net.claywiemann.openanywhere.menu.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -95,9 +99,14 @@ public class OpenContainerPacket {
         }
 
         SimpleContainer container = ShulkerInventory.load(stack);
-
-        // Checking if the shulker box is in players ender chest, so that we can return to the ender chest
-        boolean isEnderChest = slot.container instanceof PlayerEnderChestContainer;
+        ContainerSource source;
+        if(slot.container instanceof PlayerEnderChestContainer) {
+            source = ContainerSource.ENDER_CHEST;
+        } else if (slot.container instanceof Inventory) {
+            source = ContainerSource.PLAYER_INVENTORY;
+        } else {
+            source = ContainerSource.CHEST;
+        }
 
         player.openMenu(new SimpleMenuProvider(
                 (containerId, inventory, p) ->
@@ -108,10 +117,12 @@ public class OpenContainerPacket {
                                 container,
                                 slot.container,
                                 slot.getContainerSlot(),
-                                isEnderChest
+                                source
                         ),
                 stack.getHoverName()
         ));
+
+
     }
 
     public static void openEnderChest(ServerPlayer player) {

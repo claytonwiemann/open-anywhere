@@ -44,6 +44,7 @@ public class KeyInputHandler {
                         || stack.is(Items.GRINDSTONE)
                         || stack.is(Items.STONECUTTER)
                         || stack.is(Items.ENCHANTING_TABLE)
+                        || stack.is(Items.CARTOGRAPHY_TABLE)
                         || stack.is(Items.ANVIL) || stack.is(Items.CHIPPED_ANVIL) || stack.is(Items.DAMAGED_ANVIL)
                         || (stack.getItem() instanceof BlockItem blockItem
                         && blockItem.getBlock() instanceof ShulkerBoxBlock)

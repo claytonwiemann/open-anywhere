@@ -7,6 +7,7 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCursorPosCallbackI;
 
 @Mod.EventBusSubscriber(
         modid = OpenAnywhere.MODID,
@@ -37,11 +38,17 @@ public class MousePositionHandler {
         Minecraft minecraft = Minecraft.getInstance();
 
         minecraft.execute(() -> {
-            GLFW.glfwSetCursorPos(
-                    minecraft.getWindow().getWindow(),
-                    savedX,
-                    savedY
-            );
+            long window = minecraft.getWindow().getWindow();
+
+            GLFW.glfwSetCursorPos(window, savedX, savedY);
+
+            GLFWCursorPosCallbackI callback =
+                    GLFW.glfwSetCursorPosCallback(window, null);
+
+            if (callback != null) {
+                GLFW.glfwSetCursorPosCallback(window, callback);
+                callback.invoke(window, savedX, savedY);
+            }
 
             shouldRestore = false;
         });

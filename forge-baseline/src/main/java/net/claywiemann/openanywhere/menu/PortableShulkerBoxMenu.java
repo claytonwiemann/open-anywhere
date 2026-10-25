@@ -1,6 +1,7 @@
 package net.claywiemann.openanywhere.menu;
 
 import net.claywiemann.openanywhere.inventory.ShulkerInventory;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -20,13 +21,13 @@ public class PortableShulkerBoxMenu extends ShulkerBoxMenu {
     private final int sourceIndex;
     private final ItemStack shulkerStack;
     private final int lockedMenuSlot;
-    private final boolean fromEnderChest;
+    private final ContainerSource containerSource;
 
     // Client-side constructor
-    public PortableShulkerBoxMenu(int containerId, Inventory inventory, ServerPlayer player, boolean fromEnderChest) {
+    public PortableShulkerBoxMenu(int containerId, Inventory inventory, ServerPlayer player, ContainerSource containerSource) {
         super(containerId, inventory);
         this.player = player;
-        this.fromEnderChest = fromEnderChest;
+        this.containerSource = containerSource;
 
         this.shulkerInventory = null;
         this.sourceContainer = null;
@@ -43,7 +44,7 @@ public class PortableShulkerBoxMenu extends ShulkerBoxMenu {
             SimpleContainer container,
             Container sourceContainer,
             int sourceIndex,
-            boolean fromEnderChest
+            ContainerSource containerSource
     ) {
         super(containerId, inventory, container);
         this.player = player;
@@ -52,7 +53,7 @@ public class PortableShulkerBoxMenu extends ShulkerBoxMenu {
         this.sourceContainer = sourceContainer;
         this.sourceIndex = sourceIndex;
         this.shulkerStack = sourceContainer.getItem(sourceIndex);
-        this.fromEnderChest = fromEnderChest;
+        this.containerSource = containerSource;
 
         // 0–26: Shulker inventory
         // 27–53: Player main inventory
@@ -146,9 +147,17 @@ public class PortableShulkerBoxMenu extends ShulkerBoxMenu {
                 sourceContainer.setChanged();
             }
 
-            // If opened from players ender chest, return to the players ender chest gui
-            if(fromEnderChest && player instanceof ServerPlayer serverPlayer) {
-                EnderChestReopenHandler.schedule(serverPlayer);
+            switch (containerSource) {
+                case ENDER_CHEST ->
+                        EnderChestReopenHandler.schedule((ServerPlayer)player);
+
+                case CHEST -> {
+                        ChestReopenHandler.schedule((ServerPlayer)player, sourceContainer);
+                }
+
+                case PLAYER_INVENTORY -> {
+
+                }
             }
         }
 
